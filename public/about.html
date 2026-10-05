@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Institute | Sagar Classes</title>
+  <link rel="icon" href="logo.jpeg">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Dark / light switch (CSS only): the checkbox state drives the theme -->
+<input type="checkbox" id="themeSwitch" class="css-switch" hidden>
+
+<div class="app-container">
+
+  <!-- Mobile menu switch (CSS only) -->
+  <input type="checkbox" id="navToggle" class="css-switch" hidden>
+  <label for="navToggle" class="sidebar-overlay" aria-label="Close menu"></label>
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="index.html" style="text-decoration:none;color:inherit">
+      <div class="brand-logo animate-pulse">
+        <img src="logo.jpeg" alt="Sagar Classes Logo" class="sagar-logo-img">
+      </div>
+      <div>
+        SAGAR <span>CLASSES</span>
+        <p class="brand-sub">Excellence in Education</p>
+      </div>
+    </a>
+
+    <nav class="side-nav">
+      <a href="index.html" class="nav-link">
+        <i class="ri-home-5-fill nav-icon-home"></i> Home Dashboard
+      </a>
+      <a href="facilities.html" class="nav-link">
+        <i class="ri-school-fill nav-icon-facilities"></i> Class Facilities
+      </a>
+      <a href="functions.html" class="nav-link">
+        <i class="ri-calendar-event-fill nav-icon-events"></i> Functions &amp; Events
+      </a>
+      <a href="about.html" class="nav-link active" aria-current="page">
+        <i class="ri-community-fill nav-icon-about"></i> About Institute
+      </a>
+      <a href="academic.html" class="nav-link">
+        <i class="ri-graduation-cap-fill nav-icon-student"></i> Student Attendance
+      </a>
+      <a href="staff-attendance.html" class="nav-link">
+        <i class="ri-user-star-fill nav-icon-staff"></i> Staff Attendance
+      </a>
+      <a href="toppers.html" class="nav-link">
+        <i class="ri-medal-2-fill nav-icon-toppers"></i> Toppers &amp; Results
+      </a>
+      <a href="contact.html" class="nav-link">
+        <i class="ri-map-pin-user-fill nav-icon-contact"></i> Contact &amp; Branches
+      </a>
+
+      <div class="divider"></div>
+
+      <a href="admin.html" class="nav-link admin-btn">
+        <i class="ri-admin-fill nav-icon-admin"></i> Admin Panel
+      </a>
+    </nav>
+
+    <div class="theme-toggle-box">
+      <label for="themeSwitch" class="theme-btn" role="button" tabindex="0">
+        <span class="to-light"><i class="ri-sun-fill"></i> Light Mode</span>
+        <span class="to-dark"><i class="ri-moon-fill"></i> Dark Mode</span>
+      </label>
+    </div>
+  </aside>
+
+  <!-- ============ FLOATING MOBILE TOP BAR ============ -->
+  <div class="floating-menu-bar">
+    <a class="floating-brand" href="index.html" style="text-decoration:none;color:inherit">
+      <img src="logo.jpeg" alt="Logo" class="sagar-logo-img-small" style="width:28px;height:28px;border-radius:6px;object-fit:cover;">
+      SAGAR <span>CLASSES</span>
+    </a>
+    <div class="floating-actions-mobile">
+      <label for="themeSwitch" class="menu-action-icon-btn" title="Toggle Theme" role="button">
+        <i class="ri-contrast-2-fill nav-icon-home"></i>
+      </label>
+      <a href="admin.html" class="menu-action-icon-btn admin-mobile-icon" title="Admin Panel">
+        <i class="ri-admin-fill nav-icon-admin"></i>
+      </a>
+      <label for="navToggle" class="menu-toggle-btn" title="Open Menu" role="button">
+        <i class="ri-menu-3-fill" style="color:#a5b4fc"></i>
+      </label>
+    </div>
+  </div>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main-content">
+
+    <div class="notice-card sticky-notice">
+      <span class="notice-tag animate-bounce">
+        <i class="ri-megaphone-fill" style="color:#fff"></i> NOTICE
+      </span>
+      <div class="ticker"><span class="ticker-text">🎓 Admissions open for 2026-27 academic year! Enroll now.   ·   📝 Unit Test scheduled for Class 10 on 1st September 2026.   ·   🏆 Congratulations to all Board toppers of 2025-26 batch!   ·   📅 Parent-Teacher Meeting on 10th September 2026 at 10:00 AM.</span></div>
+    </div>
+
+    <section id="about" class="view active">
+      <h2 class="section-title">
+        <i class="ri-graduation-cap-fill" style="color:#818cf8;filter:drop-shadow(0 0 8px rgba(129,140,248,.6))"></i>
+        About Sagar Classes
+      </h2>
+
+      <!-- Founder Spotlight -->
+      <div class="founder-spotlight-card">
+        <div class="founder-img-wrap">
+          <div class="founder-img-ring">
+            <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=500&q=85"
+                 alt="Founder Sagar Sir" class="founder-photo">
+          </div>
+          <div class="founder-badge-since">
+            <i class="ri-award-fill" style="color:#fbbf24"></i> Est. 2011
+          </div>
+        </div>
+        <div class="founder-content">
+          <div class="founder-tag-row">
+            <span class="about-founder-tag">
+              <i class="ri-award-fill" style="color:#fbbf24"></i> Founder &amp; Director
+            </span>
+          </div>
+          <h2 class="founder-name">Sagar Sir</h2>
+          <p class="founder-tagline">"Education is not the learning of facts, but the training of the mind to think."</p>
+          <p class="founder-bio">Established in 2011 by Founder &amp; Director Sagar Sir, Sagar Classes has grown into one of Thane's premier educational coaching institutes. Our core philosophy is to provide rigorous academic training combined with individual mentorship, helping every child achieve their highest potential across SSC and HSC board curriculums.</p>
+          <div class="founder-stats-row">
+            <div class="founder-stat"><strong>15+</strong><span>Years Experience</span></div>
+            <div class="founder-stat"><strong>5000+</strong><span>Students Taught</span></div>
+            <div class="founder-stat"><strong>95%+</strong><span>Success Rate</span></div>
+            <div class="founder-stat"><strong>2</strong><span>Branches</span></div>
+          </div>
+        </div>
+      </div><!-- /founder-spotlight-card -->
+
+      <!-- Vision / Pedagogy / Values / Faculty Cards -->
+      <div class="about-info-grid">
+        <div class="about-info-card">
+          <div class="about-info-icon" style="background:rgba(16,185,129,.12);color:var(--accent-green);">
+            <i class="ri-eye-fill"></i>
+          </div>
+          <h3>Our Vision</h3>
+          <p>To redefine grassroots coaching in Thane by making top-tier digital learning, conceptual clarity, and disciplined mentorship accessible to every student from Class 1st to 12th.</p>
+        </div>
+        <div class="about-info-card">
+          <div class="about-info-icon" style="background:rgba(56,189,248,.12);color:var(--accent-secondary);">
+            <i class="ri-lightbulb-flash-fill"></i>
+          </div>
+          <h3>Our Pedagogy</h3>
+          <p>A structured approach emphasizing interactive smartboard sessions, rigorous weekly testing, continuous performance tracking, and customized doubt-solving modules.</p>
+        </div>
+        <div class="about-info-card">
+          <div class="about-info-icon" style="background:rgba(245,158,11,.12);color:var(--accent-gold);">
+            <i class="ri-heart-3-fill"></i>
+          </div>
+          <h3>Our Values</h3>
+          <p>Integrity, individual student focus, unwavering academic discipline, and a nurturing environment that builds confidence and lifelong learning habits.</p>
+        </div>
+        <div class="about-info-card">
+          <div class="about-info-icon" style="background:rgba(239,68,68,.12);color:#ef4444;">
+            <i class="ri-group-fill"></i>
+          </div>
+          <h3>Expert Faculty</h3>
+          <p>Highly qualified, approachable subject specialists with extensive experience in navigating state board patterns and fostering student engagement.</p>
+        </div>
+      </div><!-- /about-info-grid -->
+
+      <!-- Milestones Timeline -->
+      <div class="about-timeline-section">
+        <div class="about-timeline-header">
+          <h3><i class="ri-time-line" style="color:#a78bfa"></i> Our Journey &amp; Milestones</h3>
+          <p>A legacy of excellence built over 15 years</p>
+        </div>
+        <div class="about-timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <span class="timeline-year">2011</span>
+              <h4>Inception at Manorama Nagar</h4>
+              <p>Started as a modest coaching initiative with a handful of dedicated learners.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <span class="timeline-year">2014</span>
+              <h4>Consistent Board Excellence</h4>
+              <p>Achieved our milestone of 100% board passing results with record distinctions.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <span class="timeline-year">2017</span>
+              <h4>Expansion to Branch 2</h4>
+              <p>Opened our second learning facility to accommodate growing student strength across Thane West.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <span class="timeline-year">2020</span>
+              <h4>Digital Infrastructure Upgrade</h4>
+              <p>Integrated smartboards, CCTV security, and air-conditioned classrooms across all premises.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card">
+              <span class="timeline-year">2024</span>
+              <h4>5,000+ Alumni Milestone</h4>
+              <p>Celebrated over five thousand successful student journeys and top board rankings.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot active-dot"></div>
+            <div class="timeline-card active-card">
+              <span class="timeline-year">2026</span>
+              <h4>Digital Portal Launch</h4>
+              <p>Rolled out a comprehensive automation portal for real-time attendance, records, and staff management.</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- /about-timeline-section -->
+
+      <!-- Campus Life Event Gallery -->
+      <div class="about-events-section">
+        <div class="about-section-header">
+          <h3><i class="ri-image-2-fill" style="color:#f97316"></i> Campus Life &amp; Events</h3>
+          <p>Glimpses of our vibrant institute culture</p>
+        </div>
+        <div class="about-events-grid">
+          <div class="about-event-tile tall">
+            <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&w=900&q=85" alt="Annual Event">
+            <div class="about-event-overlay">
+              <span><i class="ri-award-fill" style="color:#fbbf24"></i> Annual Prize Distribution</span>
+            </div>
+          </div>
+          <div class="about-event-tile">
+            <img src="https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=900&q=85" alt="Classroom">
+            <div class="about-event-overlay">
+              <span><i class="ri-open-arm-fill" style="color:#38bdf8"></i> Smart Classrooms</span>
+            </div>
+          </div>
+          <div class="about-event-tile">
+            <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=85" alt="Students">
+            <div class="about-event-overlay">
+              <span><i class="ri-group-fill" style="color:#34d399"></i> Student Activities</span>
+            </div>
+          </div>
+          <div class="about-event-tile">
+            <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=900&q=85" alt="Science Exhibition">
+            <div class="about-event-overlay">
+              <span><i class="ri-test-tube-fill" style="color:#c084fc"></i> Science Exhibition</span>
+            </div>
+          </div>
+          <div class="about-event-tile">
+            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=85" alt="Sports">
+            <div class="about-event-overlay">
+              <span><i class="ri-riding-fill" style="color:#fb923c"></i> Sports &amp; Fun Activities</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /about-events-section -->
+
+    </section>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="main-site-container footer-inner-wrap">
+    <div class="footer-divider-row">
+      <div class="copyright-text-box">
+        <p>&copy; 2026 <strong>Sagar Classes</strong>. All Rights Reserved.</p>
+        <span class="footer-tagline">
+          <i class="ri-heart-fill" style="color:#f87171"></i> Designed &amp; Developed with Passion.
+          <i class="ri-sparkling-fill" style="color:#fbbf24"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="store.js" defer></script>
+<script src="script.js" defer></script>
+</body>
+</html>

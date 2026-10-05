@@ -1,3 +1,5 @@
+
+/* ===== base.css ===== */
 /* =================================================================
    SAGAR CLASSES — FULLY RESPONSIVE MODERN GLASSMORPHIC THEME
    v2.0 | Responsive, Animated, Admin Panel Enhanced
@@ -41,7 +43,7 @@
   --shadow-glow: 0 8px 32px var(--primary-glow);
 }
 
-[data-theme="light"] {
+html:has(#themeSwitch:checked) {
   --bg-gradient: linear-gradient(135deg, #f2f4ff 0%, #eaefff 50%, #dee6ff 100%);
   --glass-bg: rgba(255,255,255,0.82);
   --glass-border: rgba(91,91,246,0.14);
@@ -118,6 +120,8 @@ body {
   50%      { background-position:100% 50%; }
 }
 
+
+/* ===== layout-nav.css ===== */
 /* ── LAYOUT ── */
 .app-container {
   display: flex;
@@ -346,7 +350,7 @@ body {
   z-index: 150;
 }
 
-.sidebar-overlay.active { display: block; }
+@media (max-width: 1024px) { #navToggle:checked ~ .sidebar-overlay { display: block; } }
 
 /* ══════════════════════════════════════════
    MAIN CONTENT
@@ -396,12 +400,6 @@ body {
   animation: bounce 2s infinite;
 }
 
-marquee {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-main);
-  flex: 1;
-}
 
 /* ── VIEWS ── */
 .view {
@@ -527,6 +525,8 @@ button:not(.main-btn):not(.p-btn):not(.a-btn):hover {
 /* ══════════════════════════════════════════
    HERO BANNER
 ══════════════════════════════════════════ */
+
+/* ===== home-facilities.css ===== */
 .hero-banner {
   background: var(--glass-card);
   backdrop-filter: blur(14px);
@@ -951,6 +951,8 @@ button:not(.main-btn):not(.p-btn):not(.a-btn):hover {
 
 .event-campus-tag { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.3rem; }
 
+
+/* ===== about.css ===== */
 /* ── FOUNDER SPOTLIGHT ── */
 .founder-spotlight-card {
   background: var(--glass-card);
@@ -1094,6 +1096,8 @@ button:not(.main-btn):not(.p-btn):not(.a-btn):hover {
 .about-info-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
 .about-info-card p { font-size: 0.84rem; color: var(--text-muted); line-height: 1.65; }
 
+
+/* ===== toppers.css ===== */
 /* ── TOPPERS ── */
 .topper-spotlight {
   background: var(--glass-card);
@@ -1195,6 +1199,8 @@ button:not(.main-btn):not(.p-btn):not(.a-btn):hover {
 .topper-card h3 { font-size: 1rem; font-weight: 700; }
 .topper-score { color: var(--accent-green); font-size: 0.875rem; font-weight: 700; margin-top: 0.25rem; }
 
+
+/* ===== contact.css ===== */
 /* ── CONTACT SECTION ── */
 .notice-card, .contact-helpline-card {
   display: flex;
@@ -1387,17 +1393,19 @@ select { cursor: pointer; }
 textarea { resize: vertical; min-height: 80px; }
 .pill-textarea { resize: none; min-height: 120px; }
 
-[data-theme="light"] input[type="text"],
-[data-theme="light"] input[type="password"],
-[data-theme="light"] input[type="tel"],
-[data-theme="light"] select,
-[data-theme="light"] textarea,
-[data-theme="light"] .pill-input,
-[data-theme="light"] .pill-textarea {
+html:has(#themeSwitch:checked) input[type="text"],
+html:has(#themeSwitch:checked) input[type="password"],
+html:has(#themeSwitch:checked) input[type="tel"],
+html:has(#themeSwitch:checked) select,
+html:has(#themeSwitch:checked) textarea,
+html:has(#themeSwitch:checked) .pill-input,
+html:has(#themeSwitch:checked) .pill-textarea {
   background: rgba(240,243,255,0.9);
   color: var(--text-main);
 }
 
+
+/* ===== attendance-portal.css ===== */
 /* ── STUDENT / STAFF PORTAL ── */
 .student-login-card {
   max-width: 480px;
@@ -1551,6 +1559,8 @@ textarea { resize: vertical; min-height: 80px; }
   font-family: 'Poppins', sans-serif;
 }
 
+
+/* ===== admin.css ===== */
 /* ── ADMIN STATS GRID ── */
 .admin-stats-grid {
   display: grid;
@@ -1788,7 +1798,7 @@ th {
   z-index: 5;
 }
 
-[data-theme="light"] th { background: rgba(99,102,241,0.06); }
+html:has(#themeSwitch:checked) th { background: rgba(99,102,241,0.06); }
 
 tr:hover td { background: rgba(99,102,241,0.05); }
 
@@ -1813,6 +1823,8 @@ td img {
 .empty-state p { font-size: 0.875rem; }
 
 /* ── MODALS ── */
+
+/* ===== modals-footer.css ===== */
 .modal {
   position: fixed;
   inset: 0;
@@ -1941,6 +1953,8 @@ td img {
 .animate-pulse { animation: pulse 3s infinite; }
 .animate-bounce { animation: bounce 2s infinite; }
 
+
+/* ===== responsive.css ===== */
 /* ── STUDENT ATTENDANCE PORTAL STYLES ── */
 .calendar-nav-btn { padding: 4px 10px !important; font-size: 0.75rem !important; }
 
@@ -1956,7 +1970,7 @@ td img {
     width: min(var(--sidebar-width), 80vw);
   }
 
-  .sidebar.mobile-open { transform: translateX(0); }
+  #navToggle:checked ~ .sidebar { transform: translateX(0); }
 
   .floating-menu-bar { display: flex; }
 
@@ -2133,7 +2147,7 @@ input[type="date"] {
   color-scheme: dark;
 }
 
-[data-theme="light"] input[type="date"] {
+html:has(#themeSwitch:checked) input[type="date"] {
   background: rgba(240,243,255,0.9);
   color: var(--text-main);
   color-scheme: light;
@@ -2199,6 +2213,8 @@ input[type="file"]::file-selector-button:hover {
    ABOUT PAGE — Full Styling
 ══════════════════════════════════════════════════════════════ */
 
+
+/* ===== about-extra.css ===== */
 /* ── About Section Header ── */
 .about-section-header {
   margin-bottom: 1.25rem;
@@ -2531,6 +2547,8 @@ input[type="file"]::file-selector-button:hover {
 .nav-link:hover .nav-icon-admin,
 .nav-link.active .nav-icon-admin      { color: #d97706; }
 
+
+/* ===== facility-icons.css ===== */
 /* ── COLORFUL FACILITY ICON VARIANTS ── */
 .facility-icon-indigo {
   background: rgba(99,102,241,0.12);
@@ -2574,6 +2592,8 @@ input[type="file"]::file-selector-button:hover {
    HISTORY / ARCHIVE TAB — FULL STYLING
 ══════════════════════════════════════════════════════════════ */
 
+
+/* ===== admin-history.css ===== */
 /* ── Archive Now Banner ── */
 .history-archive-banner {
   background: linear-gradient(135deg, rgba(13,148,136,0.1), rgba(8,145,178,0.08));
@@ -3705,21 +3725,21 @@ input[type="file"]::file-selector-button:hover {
 /* ═══════════════════════════════
    LIGHT THEME OVERRIDES
 ═══════════════════════════════ */
-[data-theme="light"] .history-archive-banner {
+html:has(#themeSwitch:checked) .history-archive-banner {
   background: linear-gradient(135deg, rgba(13,148,136,0.07), rgba(8,145,178,0.05));
 }
 
-[data-theme="light"] .history-search-input,
-[data-theme="light"] .history-type-select {
+html:has(#themeSwitch:checked) .history-search-input,
+html:has(#themeSwitch:checked) .history-type-select {
   background: rgba(240,243,255,0.9);
 }
 
-[data-theme="light"] .history-archive-card {
+html:has(#themeSwitch:checked) .history-archive-card {
   box-shadow: 0 2px 12px rgba(45,212,191,0.06);
 }
 
-[data-theme="light"] .history-stat-student { background: rgba(129,140,248,0.05); }
-[data-theme="light"] .history-stat-staff   { background: rgba(52,211,153,0.05); }
+html:has(#themeSwitch:checked) .history-stat-student { background: rgba(129,140,248,0.05); }
+html:has(#themeSwitch:checked) .history-stat-staff   { background: rgba(52,211,153,0.05); }
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -3887,7 +3907,7 @@ input[type="file"]::file-selector-button:hover {
   box-shadow: 0 0 0 3px rgba(45,212,191,0.15);
 }
 
-[data-theme="light"] #historyPanel #historyTypeFilter {
+html:has(#themeSwitch:checked) #historyPanel #historyTypeFilter {
   background-color: rgba(240,243,255,0.9);
 }
 
@@ -4208,17 +4228,19 @@ input[type="file"]::file-selector-button:hover {
 /* ══════════════════════════════════════════
    LIGHT THEME — History Panel
 ══════════════════════════════════════════ */
-[data-theme="light"] #historyPanel .history-filter-row .admin-toolbar-search input {
+html:has(#themeSwitch:checked) #historyPanel .history-filter-row .admin-toolbar-search input {
   background: rgba(240,243,255,0.9);
 }
 
-[data-theme="light"] #historyPanel .history-filter-row #historyTypeFilter {
+html:has(#themeSwitch:checked) #historyPanel .history-filter-row #historyTypeFilter {
   background-color: rgba(240,243,255,0.9);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%235a6480'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
 }
 
 
 
+
+/* ===== polish-overrides.css ===== */
 /* ================================================================
    SAGAR CLASSES — VISUAL POLISH / RESPONSIVE OVERHAUL v4.0
    - Realistic button hierarchy and subtle interactions
@@ -4817,6 +4839,8 @@ button, input, select, textarea { max-width:100%; }
 }
 
 
+
+/* ===== final-overrides.css ===== */
 /* ================================================================
    FINAL UI FIX PACK — DARK BUTTONS, COMPLETE TOPPER DATA, MEDALS,
    HOVER SAFE AREAS & MOBILE RESPONSIVENESS
@@ -5206,44 +5230,44 @@ a:focus-visible {
    ===================================================================== */
 
 /* Light theme navigation must keep a readable surface and hit area. */
-[data-theme="light"] .sidebar,
-[data-theme="light"] .floating-menu-bar {
+html:has(#themeSwitch:checked) .sidebar,
+html:has(#themeSwitch:checked) .floating-menu-bar {
   background: rgba(255,255,255,.96) !important;
   border-color: rgba(15,23,42,.10) !important;
   color: #0f172a !important;
   box-shadow: 0 12px 36px rgba(15,23,42,.10);
 }
-[data-theme="light"] .nav-link {
+html:has(#themeSwitch:checked) .nav-link {
   color: #475569 !important;
 }
-[data-theme="light"] .nav-link:hover,
-[data-theme="light"] .nav-link.active {
+html:has(#themeSwitch:checked) .nav-link:hover,
+html:has(#themeSwitch:checked) .nav-link.active {
   color: #312e81 !important;
   background: rgba(79,70,229,.10) !important;
 }
-[data-theme="light"] .nav-link.admin-btn {
+html:has(#themeSwitch:checked) .nav-link.admin-btn {
   color: #92400e !important;
   background: rgba(245,158,11,.08) !important;
 }
-[data-theme="light"] .nav-link.admin-btn:hover {
+html:has(#themeSwitch:checked) .nav-link.admin-btn:hover {
   color: #78350f !important;
   background: rgba(245,158,11,.16) !important;
 }
-[data-theme="light"] .brand,
-[data-theme="light"] .brand-sub,
-[data-theme="light"] .floating-brand {
+html:has(#themeSwitch:checked) .brand,
+html:has(#themeSwitch:checked) .brand-sub,
+html:has(#themeSwitch:checked) .floating-brand {
   color: #0f172a;
 }
-[data-theme="light"] .theme-btn,
-[data-theme="light"] .menu-action-icon-btn,
-[data-theme="light"] .menu-toggle-btn {
+html:has(#themeSwitch:checked) .theme-btn,
+html:has(#themeSwitch:checked) .menu-action-icon-btn,
+html:has(#themeSwitch:checked) .menu-toggle-btn {
   background: #f1f5f9 !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
 }
-[data-theme="light"] .theme-btn:hover,
-[data-theme="light"] .menu-action-icon-btn:hover,
-[data-theme="light"] .menu-toggle-btn:hover {
+html:has(#themeSwitch:checked) .theme-btn:hover,
+html:has(#themeSwitch:checked) .menu-action-icon-btn:hover,
+html:has(#themeSwitch:checked) .menu-toggle-btn:hover {
   background: #312e81 !important;
   color: #fff !important;
   border-color: #4338ca !important;
@@ -5495,4 +5519,228 @@ textarea:focus-visible {
 }
 @media (min-width: 641px) and (max-width: 900px) {
   #topperDisplay { grid-template-columns: repeat(2, minmax(210px, 270px)) !important; gap: 1rem !important; }
+}
+
+/* =====================================================================
+   HTML + CSS ONLY ADDITIONS (replace what JavaScript used to do)
+   ===================================================================== */
+
+/* hidden state holders for the CSS-only menu / theme / tabs */
+.css-switch, .css-radio { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+
+/* theme button text swap */
+.theme-btn { cursor: pointer; display: flex; align-items: center; justify-content: center; gap: .5rem; user-select: none; }
+.theme-btn .to-dark { display: none; }
+html:has(#themeSwitch:checked) .theme-btn .to-light { display: none; }
+html:has(#themeSwitch:checked) .theme-btn .to-dark { display: inline-flex; gap: .4rem; align-items: center; }
+.theme-btn .to-light { display: inline-flex; gap: .4rem; align-items: center; }
+label.menu-action-icon-btn, label.menu-toggle-btn, a.menu-action-icon-btn { cursor: pointer; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+a.nav-link, a.main-btn, a.p-btn, a.a-btn { text-decoration: none; }
+a.main-btn, a.p-btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; }
+@media (min-width: 1025px) { .sidebar-overlay { display: none !important; } }
+
+/* notice ticker (was <marquee>) */
+.ticker { flex: 1; min-width: 0; overflow: hidden; font-size: .875rem; font-weight: 500; color: var(--text-main); }
+.ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker-move 55s linear infinite; }
+.ticker:hover .ticker-text { animation-play-state: paused; }
+@keyframes ticker-move { to { transform: translateX(-100%); } }
+@media (prefers-reduced-motion: reduce) { .ticker-text { animation: none; padding-left: 0; white-space: normal; } }
+
+/* fixed-shape images: they scale with their box but never change proportion */
+img { max-width: 100%; height: auto; }
+.hero-img, .class-card-img-wrap img, .event-img-container img { width: 100%; height: 100%; object-fit: cover; }
+
+/* attendance forms */
+.student-login-fields input[type="date"] { width: 100%; }
+.status-choice { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+.status-choice input { position: absolute; opacity: 0; pointer-events: none; }
+.status-choice label { display: flex; align-items: center; justify-content: center; gap: .4rem; padding: .7rem; border-radius: 12px;
+  border: 1px solid var(--glass-border); background: var(--glass-input, rgba(255,255,255,.04)); font-weight: 700; cursor: pointer; transition: .2s; }
+.status-choice input:focus-visible + label { outline: 2px solid #6366f1; outline-offset: 2px; }
+.status-choice input:checked + .choice-present { background: rgba(52,211,153,.18); border-color: #34d399; color: #34d399; }
+.status-choice input:checked + .choice-absent  { background: rgba(248,113,113,.18); border-color: #f87171; color: #f87171; }
+
+/* admin records page */
+.admin-note { display: flex; gap: .8rem; padding: 1rem 1.2rem; border-radius: 14px; border: 1px solid rgba(251,191,36,.35);
+  background: rgba(251,191,36,.08); font-size: .85rem; line-height: 1.6; color: var(--text-main); }
+.admin-note > i { color: #fbbf24; font-size: 1.4rem; flex: none; }
+.admin-note code { background: rgba(99,102,241,.15); padding: 1px 6px; border-radius: 6px; }
+.admin-stat-card { display: flex; align-items: center; gap: .9rem; padding: 1rem 1.2rem; border-radius: 16px;
+  border: 1px solid var(--glass-border); background: var(--glass-card, rgba(255,255,255,.04)); }
+.admin-stat-card > i { font-size: 1.9rem; }
+.admin-stat-card strong { display: block; font-size: 1.5rem; line-height: 1.1; }
+.admin-stat-card span { color: var(--text-muted); font-size: .8rem; font-weight: 600; }
+.admin-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; display: block; }
+
+.tab-nav { display: flex; flex-wrap: wrap; gap: .5rem; }
+.tab-nav .admin-tab-btn { cursor: pointer; display: inline-flex; align-items: center; gap: .4rem; user-select: none; }
+.tab-panel { display: none; }
+.tab-panels { margin-top: 1rem; }
+
+.month-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin: .4rem 0 1rem; }
+.month-chip { cursor: pointer; padding: .45rem .9rem; border-radius: 999px; border: 1px solid var(--glass-border);
+  font-size: .8rem; font-weight: 700; user-select: none; }
+.month-panel { display: none; }
+.month-title { margin: 0 0 .7rem; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+
+.register { width: max-content; min-width: 100%; border-collapse: collapse; font-size: .78rem; }
+.register th, .register td { padding: .4rem .35rem; text-align: center; white-space: nowrap; border-bottom: 1px solid var(--glass-border); }
+.register .reg-name { position: sticky; left: 0; text-align: left; min-width: 170px; padding-left: .7rem; background: var(--bg-solid, #0c1120); z-index: 1; }
+.register .reg-name small { display: block; color: var(--text-muted); font-size: .7rem; font-weight: 500; }
+.register .sun { background: rgba(251,113,133,.10); }
+
+@media (max-width: 600px) { .admin-note { flex-direction: column; } }
+
+/* ── generated: CSS-only tabs ── */
+#t-students:checked ~ .tab-nav label[for="t-students"] { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border-color:transparent; box-shadow: var(--shadow-glow); }
+#t-students:checked ~ .tab-panels #p-students { display:block; }
+#t-staff:checked ~ .tab-nav label[for="t-staff"] { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border-color:transparent; box-shadow: var(--shadow-glow); }
+#t-staff:checked ~ .tab-panels #p-staff { display:block; }
+#t-stuatt:checked ~ .tab-nav label[for="t-stuatt"] { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border-color:transparent; box-shadow: var(--shadow-glow); }
+#t-stuatt:checked ~ .tab-panels #p-stuatt { display:block; }
+#t-staffatt:checked ~ .tab-nav label[for="t-staffatt"] { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border-color:transparent; box-shadow: var(--shadow-glow); }
+#t-staffatt:checked ~ .tab-panels #p-staffatt { display:block; }
+#t-toppers:checked ~ .tab-nav label[for="t-toppers"] { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border-color:transparent; box-shadow: var(--shadow-glow); }
+#t-toppers:checked ~ .tab-panels #p-toppers { display:block; }
+#t-functions:checked ~ .tab-nav label[for="t-functions"] { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border-color:transparent; box-shadow: var(--shadow-glow); }
+#t-functions:checked ~ .tab-panels #p-functions { display:block; }
+#t-notices:checked ~ .tab-nav label[for="t-notices"] { background: linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border-color:transparent; box-shadow: var(--shadow-glow); }
+#t-notices:checked ~ .tab-panels #p-notices { display:block; }
+#stu-m-2026-10:checked ~ .month-chips label[for="stu-m-2026-10"] { background:#6366f1; color:#fff; border-color:#6366f1; }
+#stu-m-2026-10:checked ~ #stu-panel-2026-10 { display:block; }
+#stu-m-2026-09:checked ~ .month-chips label[for="stu-m-2026-09"] { background:#6366f1; color:#fff; border-color:#6366f1; }
+#stu-m-2026-09:checked ~ #stu-panel-2026-09 { display:block; }
+#stu-m-2026-08:checked ~ .month-chips label[for="stu-m-2026-08"] { background:#6366f1; color:#fff; border-color:#6366f1; }
+#stu-m-2026-08:checked ~ #stu-panel-2026-08 { display:block; }
+#stf-m-2026-10:checked ~ .month-chips label[for="stf-m-2026-10"] { background:#6366f1; color:#fff; border-color:#6366f1; }
+#stf-m-2026-10:checked ~ #stf-panel-2026-10 { display:block; }
+#stf-m-2026-09:checked ~ .month-chips label[for="stf-m-2026-09"] { background:#6366f1; color:#fff; border-color:#6366f1; }
+#stf-m-2026-09:checked ~ #stf-panel-2026-09 { display:block; }
+#stf-m-2026-08:checked ~ .month-chips label[for="stf-m-2026-08"] { background:#6366f1; color:#fff; border-color:#6366f1; }
+#stf-m-2026-08:checked ~ #stf-panel-2026-08 { display:block; }
+/* ── FOOTER STYLING EXTENSION ── */
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  text-align: left;
+  padding-bottom: 0.5rem;
+}
+
+.footer-col h4 {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+  position: relative;
+  padding-bottom: 0.4rem;
+}
+
+.footer-col h4::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 28px; height: 2px;
+  background: var(--primary);
+  border-radius: 99px;
+}
+
+.footer-brand-override {
+  padding: 0 !important;
+  border: none !important;
+  margin-bottom: 0.75rem;
+}
+
+.footer-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.social-icon-btn {
+  width: 34px; height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--glass-card);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.social-icon-btn:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow);
+}
+
+.footer-links-list, .footer-contact-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.footer-links-list a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.84rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: var(--transition);
+}
+
+.footer-links-list a i { color: var(--primary); font-size: 0.95rem; }
+.footer-links-list a:hover { color: var(--primary); transform: translateX(3px); }
+
+.footer-contact-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.footer-contact-list li i {
+  color: var(--primary);
+  font-size: 1.05rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.footer-newsletter-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.footer-input {
+  flex: 1;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.footer-sub-btn {
+  padding: 0.55rem 1rem;
+  font-size: 0.8rem;
+}
+
+.footer-divider-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
