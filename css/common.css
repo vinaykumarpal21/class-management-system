@@ -1,0 +1,146 @@
+/* =====================================================================
+   Sagar Classes – COMMON STYLES (loaded last on every page)
+   1. tokens · 2. one hover / focus system · 3. footer · 4. admin panel: spacing + responsive
+   Light is the default theme; Dark applies only when html[data-theme="dark"].
+   ===================================================================== */
+
+/* ---------- 1. tokens ---------- */
+:root {
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --dur: .22s;
+  --lift: -4px;                                   /* how far cards rise on hover */
+  --lift-sm: -2px;                                /* buttons, chips, icons */
+  --hover-shadow: 0 14px 34px rgba(79, 70, 229, .18);
+  --gap: 1.1rem;                                  /* default gap between cards / sections */
+  --ok: #16a34a; --warn: #d97706; --bad: #dc2626;
+}
+html[data-theme="dark"] { --ok: #34d399; --warn: #fbbf24; --bad: #f87171; --hover-shadow: 0 14px 34px rgba(0, 0, 0, .45); }
+
+[hidden] { display: none !important; }
+html, body { overflow-x: hidden; }
+body { min-height: 100vh; }
+.main-content { min-width: 0; }
+
+/* ---------- 2. one hover / focus system ---------- */
+.main-btn, .p-btn, .a-btn, .adm-btn, .nav-link, .admin-tab-btn, .theme-btn, .menu-action-icon-btn, .menu-toggle-btn,
+.social-icon-btn, .footer-links-list a, .card, .facility-card, .class-card-large, .event-tile-card, .topper-card,
+.timeline-card, .contact-card, .about-info-card, .admin-stat-card, .achiever-chip, .animate-hover-up, .pay-card, .pay-qr-figure {
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), background-color var(--dur) var(--ease),
+              border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+/* hover only where a real pointer exists, so touch screens never get "stuck" hover states */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover, .facility-card:hover, .class-card-large:hover, .event-tile-card:hover, .topper-card:hover,
+  .timeline-card:hover, .contact-card:hover, .about-info-card:hover, .admin-stat-card:hover, .achiever-chip:hover,
+  .animate-hover-up:hover { transform: translateY(var(--lift)); box-shadow: var(--hover-shadow); border-color: rgba(99, 102, 241, .35); }
+  .main-btn:hover, .p-btn:hover, .a-btn:hover, .adm-btn:hover, .social-icon-btn:hover,
+  .menu-action-icon-btn:hover, .menu-toggle-btn:hover { transform: translateY(var(--lift-sm)); }
+  .admin-tab-btn:hover { transform: translateY(var(--lift-sm)); }
+  .nav-link:hover { transform: translateX(3px); }
+}
+.main-btn:active, .p-btn:active, .adm-btn:active, .admin-tab-btn:active { transform: translateY(0) scale(.98); }
+:where(a, button, input, select, textarea, label[role="button"], .admin-tab-btn):focus-visible {
+  outline: 3px solid rgba(99, 102, 241, .55); outline-offset: 2px; border-radius: 10px;
+}
+.nav-link { transition: transform var(--dur) var(--ease), background-color var(--dur) var(--ease), color var(--dur) var(--ease); }
+@media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+/* ---------- 3. footer (same markup on every page, from js/layout.js) ---------- */
+.site-footer { padding: 2.25rem 1.75rem 2rem; margin-left: var(--sidebar-width); background: var(--glass-bg); border-top: 1px solid var(--glass-border); }
+.site-footer .footer-inner-wrap { text-align: left; max-width: 1180px; margin: 0 auto; }
+.site-footer .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1.3fr; gap: 2.25rem 3rem; align-items: start; }
+.site-footer .footer-col { min-width: 0; }
+.site-footer .footer-brand-override { display: flex; align-items: center; gap: .75rem; text-decoration: none; color: inherit; margin: 0 0 .9rem; }
+.site-footer .footer-brand-override h3 { font-family: 'Poppins', sans-serif; font-size: 1.15rem; line-height: 1.2; }
+.site-footer .footer-brand-override h3 span { color: var(--primary); }
+.site-footer .sagar-logo-img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
+.site-footer .footer-desc { max-width: 38ch; margin-bottom: 1.1rem; }
+.site-footer .footer-col h4 { margin-bottom: 1.1rem; }
+.site-footer .footer-links-list { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem 1.25rem; }
+.site-footer .footer-links-list a { width: 100%; padding: .2rem 0; line-height: 1.3; }
+.site-footer .footer-links-list a:hover { transform: translateX(4px); }
+.site-footer .footer-contact-list { gap: .8rem; }
+.site-footer .footer-contact-list a { color: inherit; text-decoration: none; }
+.site-footer .footer-contact-list a:hover { color: var(--primary); }
+.site-footer .footer-contact-list span { line-height: 1.5; }
+@media (max-width: 1024px) {
+  .site-footer { margin-left: 0 !important; padding: 2rem 1.1rem 1.75rem; }
+  .site-footer .footer-grid { grid-template-columns: 1fr 1fr; }
+  .site-footer .footer-about { grid-column: 1 / -1; }
+}
+@media (max-width: 600px) {
+  .site-footer .footer-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+  .site-footer .footer-desc { max-width: none; }
+}
+
+/* ---------- 4. admin panel: one spacing scale, responsive on every screen ---------- */
+#admin { display: flex; flex-direction: column; gap: var(--gap); }
+#adminApp { display: flex; flex-direction: column; gap: var(--gap); }
+.admin-header-box { margin: 0; padding: 1.1rem 1.4rem; border-radius: var(--radius-lg); }
+.admin-stats-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: var(--gap); margin: 0; }
+.admin-stat-card { display: flex; align-items: center; gap: .85rem; padding: 1.1rem 1.2rem; border-radius: var(--radius-lg); min-width: 0; }
+.admin-stat-card > i { font-size: 1.9rem; flex-shrink: 0; }
+.admin-stat-card strong { display: block; font-family: 'Poppins', sans-serif; font-size: 1.5rem; line-height: 1.1; }
+.admin-stat-card span { display: block; color: var(--text-muted); font-size: .78rem; font-weight: 600; margin-top: .15rem; }
+.admin-layout { gap: var(--gap); padding-top: var(--gap); }
+.admin-nav, .tab-nav { gap: .5rem; padding-bottom: .5rem; margin-bottom: 0; }
+.adm-panel { padding: 1.4rem; background: var(--glass-card); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); min-width: 0; }
+.adm-panel .form-title { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-bottom: 1rem; font-size: 1.05rem; }
+.adm-toolbar { margin: 0 0 1.1rem; gap: .65rem; }
+.adm-table { min-width: 0; white-space: normal; }
+.adm-btn, .p-btn, .main-btn { border-radius: 999px; }
+.adm-login-card, .adm-panel, .admin-header-box, .admin-stat-card { box-sizing: border-box; }
+.adm-head-actions .p-btn { white-space: nowrap; }
+
+@media (max-width: 1024px) {
+  .admin-header-box { padding: 1rem 1.1rem; }
+  .adm-panel { padding: 1.1rem; }
+}
+@media (max-width: 768px) {
+  :root { --gap: .85rem; }
+  .admin-header-box { flex-direction: column; align-items: stretch; }
+  .adm-head-actions { display: grid; grid-template-columns: 1fr 1fr; gap: .55rem; }
+  .adm-head-actions .p-btn:first-child { grid-column: 1 / -1; }
+  .adm-head-actions .p-btn { width: 100%; justify-content: center; }
+  .admin-stats-grid { grid-template-columns: 1fr 1fr; }
+  .admin-stat-card { padding: .9rem; gap: .65rem; }
+  .admin-stat-card strong { font-size: 1.25rem; }
+  .adm-panel { padding: .9rem; border-radius: var(--radius-md); }
+  .adm-toolbar > * { min-width: 0; }
+  .adm-login-card { padding: 1.5rem 1.1rem; }
+}
+@media (max-width: 380px) { .admin-stats-grid { grid-template-columns: 1fr; } }
+
+/* ---------- login card helpers ---------- */
+.adm-login-btn, .adm-login-back { width: 100%; justify-content: center; }
+.adm-login-back { text-decoration: none; }
+.admin-back-btn { text-decoration: none; }
+
+/* mobile top bar logo (was an inline style on every page) */
+.sagar-logo-img-small { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+.floating-brand { display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; color: inherit; }
+
+/* ---------- admin on small screens: everything is a horizontal list (swipe sideways) ---------- */
+@media (max-width: 768px) {
+  /* stat cards -> one swipeable row */
+  .admin-stats-grid { display: flex !important; overflow-x: auto; gap: .7rem; padding-bottom: .4rem; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+  .admin-stats-grid .admin-stat-card { flex: 0 0 150px; scroll-snap-align: start; }
+  /* tabs already scroll sideways; keep them on one line */
+  .admin-nav, .tab-nav { flex-wrap: nowrap !important; overflow-x: auto; }
+
+  /* students / staff / attendance tables: real tables again, scrolled horizontally */
+  .table-responsive-wrapper { overflow-x: auto !important; -webkit-overflow-scrolling: touch; border: 1px solid var(--glass-border) !important; border-radius: var(--radius-md); }
+  .adm-table { display: table !important; width: max-content !important; min-width: 100%; white-space: nowrap; }
+  .adm-table thead { display: table-header-group !important; }
+  .adm-table tbody { display: table-row-group !important; width: auto !important; }
+  .adm-table tr { display: table-row !important; background: none !important; border: 0 !important; border-radius: 0; padding: 0 !important; margin: 0 !important; }
+  .adm-table td, .adm-table th { display: table-cell !important; width: auto !important; text-align: left !important; padding: .6rem .7rem !important; border-bottom: 1px solid var(--glass-border) !important; white-space: nowrap; }
+  .adm-table td::before { content: none !important; }
+  .adm-table td.long { max-width: 260px; white-space: normal; }
+  .adm-table td.adm-empty { text-align: center !important; }
+  .adm-table td:first-child, .adm-table th:first-child { position: sticky; left: 0; z-index: 1; background: var(--bg-solid, #0c1120); }
+  html[data-theme="light"] .adm-table td:first-child, html[data-theme="light"] .adm-table th:first-child { background: #eef1ff; }
+  .adm-row-actions { flex-wrap: nowrap !important; justify-content: flex-start !important; }
+  .register { display: table !important; }
+  .adm-panel .table-responsive-wrapper:after { content: "← swipe →"; display: block; text-align: center; font-size: .68rem; color: var(--text-muted); padding: .3rem; position: sticky; left: 0; }
+}

@@ -1,97 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="js/theme.js"></script>
   <title>Home | Sagar Classes</title>
   <link rel="icon" href="images/logo.jpeg">
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/common.css">
 </head>
 <body>
 
-<!-- Dark / light switch (CSS only): the checkbox state drives the theme -->
-<input type="checkbox" id="themeSwitch" class="css-switch" hidden>
-
 <div class="app-container">
 
-  <!-- Mobile menu switch (CSS only) -->
-  <input type="checkbox" id="navToggle" class="css-switch" hidden>
-  <label for="navToggle" class="sidebar-overlay" aria-label="Close menu"></label>
+  <script src="js/layout.js" data-part="nav"></script>
 
-  <!-- ============ SIDEBAR ============ -->
-  <aside class="sidebar" id="sidebar">
-    <a class="brand" href="index.html" style="text-decoration:none;color:inherit">
-      <div class="brand-logo animate-pulse">
-        <img src="images/logo.jpeg" alt="Sagar Classes Logo" class="sagar-logo-img">
-      </div>
-      <div>
-        SAGAR <span>CLASSES</span>
-        <p class="brand-sub">Excellence in Education</p>
-      </div>
-    </a>
-
-    <nav class="side-nav">
-      <a href="index.html" class="nav-link active" aria-current="page">
-        <i class="ri-home-5-fill nav-icon-home"></i> Home Dashboard
-      </a>
-      <a href="html/facilities.html" class="nav-link">
-        <i class="ri-school-fill nav-icon-facilities"></i> Class Facilities
-      </a>
-      <a href="html/functions.html" class="nav-link">
-        <i class="ri-calendar-event-fill nav-icon-events"></i> Functions &amp; Events
-      </a>
-      <a href="html/about.html" class="nav-link">
-        <i class="ri-community-fill nav-icon-about"></i> About Institute
-      </a>
-      <a href="html/academic.html" class="nav-link">
-        <i class="ri-graduation-cap-fill nav-icon-student"></i> Student Attendance
-      </a>
-      <a href="html/staff-attendance.html" class="nav-link">
-        <i class="ri-user-star-fill nav-icon-staff"></i> Staff Attendance
-      </a>
-      <a href="html/toppers.html" class="nav-link">
-        <i class="ri-medal-2-fill nav-icon-toppers"></i> Toppers &amp; Results
-      </a>
-      <a href="html/contact.html" class="nav-link">
-        <i class="ri-map-pin-user-fill nav-icon-contact"></i> Contact &amp; Branches
-      </a>
-
-      <div class="divider"></div>
-
-      <a href="html/admin.html" class="nav-link admin-btn">
-        <i class="ri-admin-fill nav-icon-admin"></i> Admin Panel
-      </a>
-    </nav>
-
-    <div class="theme-toggle-box">
-      <label for="themeSwitch" class="theme-btn" role="button" tabindex="0">
-        <span class="to-light"><i class="ri-sun-fill"></i> Light Mode</span>
-        <span class="to-dark"><i class="ri-moon-fill"></i> Dark Mode</span>
-      </label>
-    </div>
-  </aside>
-
-  <!-- ============ FLOATING MOBILE TOP BAR ============ -->
-  <div class="floating-menu-bar">
-    <a class="floating-brand" href="index.html" style="text-decoration:none;color:inherit">
-      <img src="images/logo.jpeg" alt="Logo" class="sagar-logo-img-small" style="width:28px;height:28px;border-radius:6px;object-fit:cover;">
-      SAGAR <span>CLASSES</span>
-    </a>
-    <div class="floating-actions-mobile">
-      <label for="themeSwitch" class="menu-action-icon-btn" title="Toggle Theme" role="button">
-        <i class="ri-contrast-2-fill nav-icon-home"></i>
-      </label>
-      <a href="html/admin.html" class="menu-action-icon-btn admin-mobile-icon" title="Admin Panel">
-        <i class="ri-admin-fill nav-icon-admin"></i>
-      </a>
-      <label for="navToggle" class="menu-toggle-btn" title="Open Menu" role="button">
-        <i class="ri-menu-3-fill" style="color:#a5b4fc"></i>
-      </label>
-    </div>
-  </div>
-
-  <!-- ============ MAIN ============ -->
   <main class="main-content">
 
     <div class="notice-card sticky-notice">
@@ -124,8 +50,7 @@
         </div>
 
         <div class="hero-image-wrap">
-          <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=85"
-               alt="Students in classroom" class="hero-img">
+          <img src="images/logo.jpeg" alt="Sagar Classes logo" class="hero-img is-logo">
           <div class="hero-experience-badge">
             <h3>15+</h3>
             <p>Years of Academic Excellence</p>
@@ -148,57 +73,6 @@
         </a>
       </div>
       <div class="achievers-strip" id="homeAchieversStrip">
-        <!-- Class 10 Toppers -->
-        <div class="achiever-chip animate-hover-up">
-          <span class="achiever-rank">#1</span>
-          <img src="https://i.pravatar.cc/100?img=11" alt="Aarav Sharma">
-          <div>
-            <strong>Aarav Sharma</strong>
-            <span>Class 10 · 95%</span>
-          </div>
-        </div>
-        <div class="achiever-chip animate-hover-up">
-          <span class="achiever-rank">#2</span>
-          <img src="https://i.pravatar.cc/100?img=47" alt="Priya Mehta">
-          <div>
-            <strong>Priya Mehta</strong>
-            <span>Class 10 · 93%</span>
-          </div>
-        </div>
-        <!-- Class 12 Science Toppers -->
-        <div class="achiever-chip animate-hover-up">
-          <span class="achiever-rank">#1</span>
-          <img src="https://i.pravatar.cc/100?img=48" alt="Sneha Joshi">
-          <div>
-            <strong>Sneha Joshi</strong>
-            <span>Class 12 (Science) · 97%</span>
-          </div>
-        </div>
-        <div class="achiever-chip animate-hover-up">
-          <span class="achiever-rank">#2</span>
-          <img src="https://i.pravatar.cc/100?img=33" alt="Ishaan Verma">
-          <div>
-            <strong>Ishaan Verma</strong>
-            <span>Class 12 (Science) · 91%</span>
-          </div>
-        </div>
-        <!-- Class 12 Commerce Toppers -->
-        <div class="achiever-chip animate-hover-up">
-          <span class="achiever-rank">#1</span>
-          <img src="https://i.pravatar.cc/100?img=52" alt="Rohan Kapoor">
-          <div>
-            <strong>Rohan Kapoor</strong>
-            <span>Class 12 (Commerce) · 94%</span>
-          </div>
-        </div>
-        <div class="achiever-chip animate-hover-up">
-          <span class="achiever-rank">#2</span>
-          <img src="https://i.pravatar.cc/100?img=32" alt="Ananya Sen">
-          <div>
-            <strong>Ananya Sen</strong>
-            <span>Class 12 (Commerce) · 90%</span>
-          </div>
-        </div>
       </div>
 
       <div class="section-header-box" style="margin-top:40px;">
@@ -210,7 +84,7 @@
       <div class="large-classes-grid" id="largeClassesContainer">
       <article class="class-card-large animate-hover-up">
         <div class="class-card-img-wrap">
-          <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=900&q=85" alt="Students learning in Class 1st – 5th" loading="lazy">
+          <img src="images/logo.jpeg" alt="Students learning in Class 1st – 5th" class="is-logo" loading="lazy">
         </div>
         <div class="class-card-body">
           <div>
@@ -227,7 +101,7 @@
       </article>
       <article class="class-card-large animate-hover-up">
         <div class="class-card-img-wrap">
-          <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=85" alt="Students learning in Class 6th – 8th" loading="lazy">
+          <img src="images/logo.jpeg" alt="Students learning in Class 6th – 8th" class="is-logo" loading="lazy">
         </div>
         <div class="class-card-body">
           <div>
@@ -244,7 +118,7 @@
       </article>
       <article class="class-card-large animate-hover-up">
         <div class="class-card-img-wrap">
-          <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=900&q=85" alt="Students learning in Class 9th – 10th" loading="lazy">
+          <img src="images/logo.jpeg" alt="Students learning in Class 9th – 10th" class="is-logo" loading="lazy">
         </div>
         <div class="class-card-body">
           <div>
@@ -261,7 +135,7 @@
       </article>
       <article class="class-card-large animate-hover-up">
         <div class="class-card-img-wrap">
-          <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=900&q=85" alt="Students learning in Class 11th – 12th Science" loading="lazy">
+          <img src="images/logo.jpeg" alt="Students learning in Class 11th – 12th Science" class="is-logo" loading="lazy">
         </div>
         <div class="class-card-body">
           <div>
@@ -278,7 +152,7 @@
       </article>
       <article class="class-card-large animate-hover-up">
         <div class="class-card-img-wrap">
-          <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=900&q=85" alt="Students learning in Class 11th – 12th Commerce" loading="lazy">
+          <img src="images/logo.jpeg" alt="Students learning in Class 11th – 12th Commerce" class="is-logo" loading="lazy">
         </div>
         <div class="class-card-body">
           <div>
@@ -298,80 +172,7 @@
     </section>
   </main>
 </div>
-<footer class="site-footer">
-  <div class="main-site-container footer-inner-wrap">
-    
-    <!-- ── FOOTER TOP CONTENT: COLUMNS ── -->
-    <div class="footer-grid">
-      
-      <!-- Column 1: About / Brand -->
-      <div class="footer-col">
-        <div class="brand footer-brand-override">
-          <img src="images/logo.jpeg" alt="Sagar Classes Logo" class="sagar-logo-img">
-          <div>
-            <h3>Sagar Classes<span>.</span></h3>
-            <span class="brand-sub">Excellence in Education</span>
-          </div>
-        </div>
-        <p class="footer-desc">
-          Empowering students with quality education, conceptual clarity, and dedicated mentorship to achieve academic brilliance.
-        </p>
-        <div class="footer-socials">
-          <a href="#" aria-label="Facebook" class="social-icon-btn"><i class="ri-facebook-fill"></i></a>
-          <a href="#" aria-label="Instagram" class="social-icon-btn"><i class="ri-instagram-fill"></i></a>
-          <a href="#" aria-label="YouTube" class="social-icon-btn"><i class="ri-youtube-fill"></i></a>
-          <a href="#" aria-label="WhatsApp" class="social-icon-btn"><i class="ri-whatsapp-fill"></i></a>
-        </div>
-      </div>
-
-      <!-- Column 2: Quick Links -->
-      <div class="footer-col">
-        <h4>Quick Links</h4>
-        <ul class="footer-links-list">
-          <li><a href="index.html"><i class="ri-arrow-right-s-line"></i> Home</a></li>
-          <li><a href="html/toppers.html"><i class="ri-arrow-right-s-line"></i> Toppers</a></li>
-          <li><a href="html/facilities.html"><i class="ri-arrow-right-s-line"></i> Facilities</a></li>
-          <li><a href="html/about.html"><i class="ri-arrow-right-s-line"></i> About Us</a></li>
-          <li><a href="html/contact.html"><i class="ri-arrow-right-s-line"></i> Contact</a></li>
-        </ul>
-      </div>
-
-      <!-- Column 3: Contact Info -->
-      <div class="footer-col">
-        <h4>Get in Touch</h4>
-        <ul class="footer-contact-list">
-          <li>
-            <i class="ri-map-pin-2-fill"></i>
-            <span>Main Branch, Education Hub, City - 400001</span>
-          </li>
-          <li>
-            <i class="ri-phone-fill"></i>
-            <span>+91 98765 43210</span>
-          </li>
-          <li>
-            <i class="ri-mail-open-fill"></i>
-            <span>support@sagarclasses.com</span>
-          </li>
-        </ul>
-      </div>
-
-    </div>
-
-    <div class="divider" style="margin: 1.5rem 0;"></div>
-
-    <!-- ── FOOTER BOTTOM COPYRIGHT ROW ── -->
-    <div class="footer-divider-row">
-      <div class="copyright-text-box">
-        <p>&copy; 2026 <strong>Sagar Classes</strong>. All Rights Reserved.</p>
-        <span class="footer-tagline">
-          <i class="ri-heart-fill" style="color:#f87171"></i> Designed &amp; Developed with Passion.
-          <i class="ri-sparkling-fill" style="color:#fbbf24"></i>
-        </span>
-      </div>
-    </div>
-
-  </div>
-</footer>
+<script src="js/layout.js" data-part="footer"></script>
 <script src="js/store.js" defer></script>
 <script src="js/script.js" defer></script>
 </body>

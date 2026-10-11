@@ -1,0 +1,135 @@
+/* Sagar Classes – responsive layer. Loaded AFTER style.css (and admin.css), so it wins on every screen size.
+   Breakpoints: 1180 laptop · 1024 tablet (sidebar becomes a drawer) · 768 phone · 480 small phone */
+
+/* ===== Basics ===== */
+html { -webkit-text-size-adjust: 100%; }
+html, body { max-width: 100%; overflow-x: hidden; }
+img, video { max-width: 100%; }
+.main-content { padding-bottom: calc(1.75rem + env(safe-area-inset-bottom, 0px)); }
+.floating-menu-bar { padding-top: env(safe-area-inset-top, 0px); height: calc(var(--header-height) + env(safe-area-inset-top, 0px)); }
+
+/* ===== Class logo used as the default picture ===== */
+img.is-logo { object-fit: contain !important; background: #fff; padding: 4px; }
+.hero-img.is-logo, .class-card-img-wrap img.is-logo, .event-img-container img.is-logo { padding: 1.25rem; background: linear-gradient(135deg, #eef2ff, #fff); }
+.topper-photo.is-logo, .admin-avatar.is-logo, .achiever-chip img.is-logo { padding: 3px; }
+
+.empty-note { color: var(--text-muted); font-size: .9rem; padding: 1rem 0; }
+.category-block { margin-top: 2rem; }
+.category-block:first-child { margin-top: 1.25rem; }
+.category-title { display: flex; align-items: center; gap: .5rem; margin-bottom: 1rem; font-size: 1.1rem; }
+.form-feedback { margin: .75rem 0 0; font-weight: 700; font-size: .9rem; text-align: center; }
+.form-feedback.ok { color: #34d399; }
+.form-feedback.bad { color: #f87171; }
+
+/* attendance forms */
+.person-preview { display: block; width: 84px; height: 84px; margin: 0 auto .25rem; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary); background: #fff; }
+.student-login-fields select.pill-input { width: 100%; }
+
+/* ===== Cards & grids: fluid on every width ===== */
+.facilities-grid, .large-classes-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
+#largeClassesContainer, #functionsDisplayContainer { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.event-img-container, .class-card-img-wrap { background: #f1f5f9; }
+.topper-card .topper-photo { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; margin: 0 auto .6rem; display: block; border: 3px solid var(--primary); }
+.achievers-strip { scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+.achiever-chip { scroll-snap-align: start; }
+.achiever-chip img { flex-shrink: 0; }
+
+/* ===== Admin: photo upload ===== */
+.photo-label { display: flex; flex-direction: column; gap: .4rem; font-size: .8rem; font-weight: 700; color: var(--text-muted); }
+.photo-field { display: flex; align-items: center; gap: .9rem; flex-wrap: wrap; }
+.photo-preview { width: 84px; height: 84px; border-radius: 50%; overflow: hidden; border: 2px solid var(--glass-border); background: #fff; flex-shrink: 0; }
+.photo-preview.wide { width: 140px; height: 88px; border-radius: 14px; }
+.photo-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-preview img.is-logo { object-fit: contain; padding: 6px; }
+.photo-actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; flex: 1 1 160px; }
+.photo-actions small { flex-basis: 100%; font-weight: 500; color: var(--text-muted); }
+
+/* ===== Admin: tables, register, names with photo ===== */
+.admin-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid var(--glass-border); background: #fff; }
+.admin-avatar.sm { width: 30px; height: 30px; }
+.who { display: flex; align-items: center; gap: .55rem; }
+.who small { display: block; color: var(--text-muted); font-weight: 500; font-size: .72rem; }
+.adm-table, .register { min-width: 0; }
+.adm-table td, .adm-table th { white-space: normal; }
+.adm-table td.long { max-width: 340px; overflow-wrap: anywhere; }
+.register { min-width: max-content; }
+.register th, .register td { padding: .45rem .5rem; text-align: center; font-size: .78rem; }
+.register td.reg-name, .register th.reg-name { position: sticky; left: 0; z-index: 2; text-align: left; min-width: 150px; background: var(--bg-solid, #0c1120); }
+html[data-theme="light"] .register td.reg-name, html[data-theme="light"] .register th.reg-name { background: #eef1ff; }
+.register .sun { background: rgba(248, 113, 113, .08); }
+.month-input { max-width: 200px; }
+.admin-nav, .tab-nav { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.admin-nav::-webkit-scrollbar { display: none; }
+.admin-tab-btn { flex-shrink: 0; }
+
+/* ===== Laptop / tablet ===== */
+@media (max-width: 1180px) {
+  .hero-banner { gap: 1.25rem; }
+}
+@media (max-width: 1024px) {
+  .main-content { max-width: 100%; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .adm-head-actions { width: 100%; }
+}
+
+/* ===== Phone ===== */
+@media (max-width: 768px) {
+  .section-header-box { flex-direction: column; align-items: flex-start; }
+  .hero-banner { padding: 1.1rem; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions > a { justify-content: center; text-align: center; }
+  .hero-experience-badge { right: .6rem; bottom: .6rem; }
+  .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .notice-tag { font-size: .7rem; padding: .35rem .6rem; }
+
+  /* 16px inputs stop iOS from zooming in; buttons get a comfortable tap size */
+  input, select, textarea, .pill-input { font-size: 16px !important; }
+  .adm-btn, .main-btn, .p-btn, .admin-tab-btn { min-height: 42px; }
+
+  /* admin header + toolbar */
+  .admin-header-box { flex-direction: column; align-items: stretch; gap: .75rem; }
+  .adm-head-actions .p-btn { flex: 1 1 140px; justify-content: center; }
+  .admin-stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .adm-toolbar { gap: .5rem; }
+  .adm-toolbar .pill-input { flex: 1 1 100%; max-width: none; }
+  .adm-toolbar .spacer { display: none; }
+  .adm-toolbar .adm-btn { flex: 1 1 calc(50% - .5rem); justify-content: center; }
+  .month-input { max-width: none; }
+
+  /* admin tables turn into cards (the month register keeps scrolling sideways instead) */
+  .table-responsive-wrapper { border: 0; overflow: visible; }
+  .register { display: block; overflow-x: auto; }
+  .adm-table, .adm-table tbody, .adm-table tr, .adm-table td { display: block; width: 100%; }
+  .adm-table thead { display: none; }
+  .adm-table tr { background: var(--glass-card); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: .4rem .8rem; margin-bottom: .75rem; }
+  .adm-table td { display: flex; justify-content: space-between; align-items: center; gap: 1rem; text-align: right; padding: .5rem 0; border-bottom: 1px dashed var(--glass-border); }
+  .adm-table td:last-child { border-bottom: 0; }
+  .adm-table td::before { content: attr(data-label); flex-shrink: 0; color: var(--text-muted); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; text-align: left; }
+  .adm-table td.adm-empty { display: block; text-align: center; }
+  .adm-table td.adm-empty::before { content: none; }
+  .adm-table td.long { max-width: none; }
+  .adm-row-actions { flex-wrap: wrap; justify-content: flex-end; }
+
+  /* modals: full width, scrolls inside */
+  .modal { padding: .5rem; align-items: flex-end; }
+  .modal-content.form-modal { max-width: 100%; max-height: 92vh; border-radius: 20px 20px 0 0; padding: 1.25rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px)); }
+  .form-modal .modal-actions .adm-btn { flex: 1; justify-content: center; }
+  .adm-toast { width: calc(100% - 2rem); text-align: center; border-radius: 14px; }
+  .adm-login { padding: 1rem 0; }
+}
+
+/* ===== Small phone ===== */
+@media (max-width: 480px) {
+  .main-content { padding-left: .7rem; padding-right: .7rem; }
+  .floating-brand { font-size: .85rem; }
+  .admin-stats-grid { gap: .6rem; }
+  .admin-stat-card { padding: .8rem; }
+  .topper-card .topper-photo { width: 84px; height: 84px; }
+  .achiever-chip { padding: .45rem .7rem; }
+  .photo-preview.wide { width: 120px; height: 76px; }
+}
+
+/* ===== Respect reduced-motion ===== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

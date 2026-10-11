@@ -1,38 +1,101 @@
 /* Sagar Classes – browser data store.
-   Replaces the Node/MySQL backend: every /api/... request made by script.js and admin.js
-   is answered here from localStorage. Data lives in THIS browser only. */
+   Every /api/... request made by script.js and admin.js is answered here from localStorage.
+   Data lives in THIS browser only. */
 (function () {
   'use strict';
 
-  var DB_KEY = 'sc_db_v1';
-  var SESSION_KEY = 'sc_admin_token';
+  var DB_KEY = 'sc_db_v2';
   var SESSION_VALUE = 'local-admin-session';
-  var DEFAULT_ADMIN = { user: 'admin', pass: 'admin@123' };   // change from the browser console: SCStore.setAdmin('user','password')
+  var DEFAULT_ADMIN = { user: 'admin', pass: 'admin@123' };   // change: SCStore.setAdmin('user','password')
+
+  /* Class logo = default picture everywhere a photo is missing. */
+  var LOGO = (function () {
+    var s = document.currentScript;
+    return s && s.src ? s.src.replace(/js\/store\.js.*$/, 'images/logo.jpeg') : 'images/logo.jpeg';
+  })();
+
+  /* ---------- small helpers ---------- */
+  var PHONE = /^[0-9+()\-\s]{6,20}$/;
+  var DATA_IMG = /^data:image\/(jpeg|png|webp|gif);base64,/;
+  var MONTH_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+  function range(a, b) { var r = []; for (var i = a; i <= b; i++) r.push(i); return r; }
+  var STUDENT_CLASSES = range(1, 12).map(function (n) { return 'Class ' + n; });
+  var TOPPER_CLASSES = range(1, 10).map(function (n) { return 'Class ' + n; })
+    .concat(['Class 11 (Science)', 'Class 11 (Commerce)', 'Class 12 (Science)', 'Class 12 (Commerce)']);
+
+  function now() { return new Date().toISOString().slice(0, 19).replace('T', ' '); }
+  function hash(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return String(h >>> 0); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function currentMonth() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+  function isValidDate(s) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+    var d = new Date(s + 'T00:00:00Z');
+    return !isNaN(d) && d.toISOString().slice(0, 10) === s;
+  }
+  function HttpError(status, message) { this.status = status; this.message = message; }
+
+  /* Natural sort: "Class 2" comes before "Class 10". */
+  function sorted(list, order) {
+    return list.slice().sort(function (a, b) {
+      for (var i = 0; i < order.length; i++) {
+        var k = order[i], desc = k[0] === '-'; if (desc) k = k.slice(1);
+        var x = a[k], y = b[k];
+        var c = typeof x === 'number' ? x - y : String(x || '').localeCompare(String(y || ''), undefined, { numeric: true });
+        if (c) return desc ? -c : c;
+      }
+      return 0;
+    });
+  }
+
+  /* ---------- toppers: rank is calculated from the score, inside each class ---------- */
+  function num(score) { return parseFloat(score) || 0; }
+  function ordinal(n) {
+    var s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+  function rankToppers(list) {
+    var byClass = {};
+    list.map(function (t) { return Object.assign({}, t); }).forEach(function (t) { (byClass[t.class_name] = byClass[t.class_name] || []).push(t); });
+    var out = [];
+    Object.keys(byClass).forEach(function (cls) {
+      var rank = 0, prev = null;
+      byClass[cls].sort(function (a, b) { return num(b.score) - num(a.score) || a.id - b.id; }).forEach(function (t, i) {
+        if (num(t.score) !== prev) { rank = i + 1; prev = num(t.score); }   // equal scores share a rank
+        t.rank = rank; t.rank_label = ordinal(rank); out.push(t);
+      });
+    });
+    var pos = function (t) { var i = TOPPER_CLASSES.indexOf(t.class_name); return i < 0 ? 999 : i; };
+    return out.sort(function (a, b) { return pos(a) - pos(b) || a.class_name.localeCompare(b.class_name) || a.rank - b.rank || a.id - b.id; });
+  }
+  function homeToppers(list) {   // one topper for every class
+    var seen = {};
+    return rankToppers(list).filter(function (t) { return seen[t.class_name] ? false : (seen[t.class_name] = true); });
+  }
 
   /* ---------- entity definitions (validation + labels) ---------- */
-  var PHONE = /^[0-9+()\-\s]{6,20}$/;
+  var PHOTO = { key: 'photo_url', label: 'Photo', type: 'photo', noExport: true };
   var ENTITIES = {
     students: { label: 'Students', order: ['class_name', 'name'], fields: [
       { key: 'name', label: 'Name', max: 100, required: true },
       { key: 'phone', label: 'Phone Number', max: 20, pattern: PHONE },
-      { key: 'class_name', label: 'Class', max: 30, required: true },
-      { key: 'photo_url', label: 'Photo URL', max: 500, url: true, noExport: true }] },
+      { key: 'class_name', label: 'Class', type: 'select', options: STUDENT_CLASSES, required: true },
+      PHOTO] },
     staff: { label: 'Staff', order: ['name'], fields: [
       { key: 'name', label: 'Name', max: 100, required: true },
       { key: 'phone', label: 'Phone Number', max: 20, pattern: PHONE },
       { key: 'department', label: 'Department', max: 80, required: true },
-      { key: 'photo_url', label: 'Photo URL', max: 500, url: true, noExport: true }] },
-    toppers: { label: 'Toppers', order: ['id'], fields: [
-      { key: 'rank_label', label: 'Rank', max: 10, required: true },
+      PHOTO] },
+    toppers: { label: 'Toppers', order: ['id'], lead: [{ key: 'rank_label', label: 'Rank' }], fields: [
       { key: 'name', label: 'Name', max: 100, required: true },
-      { key: 'class_name', label: 'Class', max: 30, required: true },
-      { key: 'score', label: 'Score', max: 10, required: true },
-      { key: 'photo_url', label: 'Photo URL', max: 500, url: true, noExport: true }] },
+      { key: 'class_name', label: 'Class', type: 'select', options: TOPPER_CLASSES, required: true },
+      { key: 'score', label: 'Score (%)', max: 10, required: true, pattern: /^\d{1,3}(\.\d+)?\s*%?$/, percent: true },
+      PHOTO] },
     events: { label: 'Functions & Events', order: ['id'], fields: [
       { key: 'title', label: 'Event', max: 120, required: true },
       { key: 'category', label: 'Category', max: 50, required: true },
       { key: 'description', label: 'Description', max: 500, long: true },
-      { key: 'photo_url', label: 'Photo URL', max: 500, url: true, noExport: true }] },
+      { key: 'photo_url', label: 'Photo', type: 'photo', wide: true, noExport: true }] },
     notices: { label: 'Notices', order: ['id'], fields: [
       { key: 'text', label: 'Notice text', max: 300, required: true, long: true }] },
     inquiries: { label: 'Enquiries', order: ['-id'], readOnlyCreate: true, extra: [{ key: 'created_at', label: 'Received' }], fields: [
@@ -42,42 +105,39 @@
       { key: 'message', label: 'Message', max: 1000, long: true }] }
   };
 
-  /* ---------- seed data (same as the old schema.sql) ---------- */
+  /* ---------- sample data (no photos: the class logo is used automatically) ---------- */
   function seed() {
-    var img = function (n) { return 'https://i.pravatar.cc/100?img=' + n; };
-    var ev = function (t, c, d, p) { return { title: t, category: c, description: d, photo_url: 'https://images.unsplash.com/' + p + '?auto=format&fit=crop&w=900&q=85' }; };
     var db = {
       students: [
-        { name: 'Aarav Sharma', phone: '+91 98111 22331', class_name: 'Class 10', photo_url: img(11) },
-        { name: 'Priya Mehta', phone: '+91 98222 33442', class_name: 'Class 10', photo_url: img(47) },
-        { name: 'Rohan Patil', phone: '+91 98333 44553', class_name: 'Class 9', photo_url: img(15) },
-        { name: 'Sneha Joshi', phone: '+91 98444 55664', class_name: 'Class 12', photo_url: img(48) },
-        { name: 'Aryan Gupta', phone: '+91 98555 66775', class_name: 'Class 8', photo_url: img(12) },
-        { name: 'Ishaan Verma', phone: '+91 98666 78886', class_name: 'Class 11', photo_url: img(33) }],
+        { name: 'Aarav Sharma', phone: '+91 98111 22331', class_name: 'Class 10' },
+        { name: 'Priya Mehta', phone: '+91 98222 33442', class_name: 'Class 10' },
+        { name: 'Rohan Patil', phone: '+91 98333 44553', class_name: 'Class 9' },
+        { name: 'Sneha Joshi', phone: '+91 98444 55664', class_name: 'Class 12' },
+        { name: 'Aryan Gupta', phone: '+91 98555 66775', class_name: 'Class 8' },
+        { name: 'Ishaan Verma', phone: '+91 98666 78886', class_name: 'Class 11' }],
       staff: [
-        { name: 'Sagar Sir', phone: '+91 99111 00111', department: 'Mathematics', photo_url: img(57) },
-        { name: "Pooja Ma'am", phone: '+91 99222 00222', department: 'Science', photo_url: img(44) },
-        { name: "Pratibha Ma'am", phone: '+91 99333 00333', department: 'Science', photo_url: img(44) },
-        { name: "Pranjal Ma'am", phone: '+91 99444 00444', department: 'Science', photo_url: img(44) },
-        { name: "Poorva Ma'am", phone: '+91 99555 00555', department: 'Science', photo_url: img(44) },
-        { name: "Sanvi Ma'am", phone: '+91 99666 00666', department: 'Science', photo_url: img(44) },
-        { name: "Prachi Ma'am", phone: '+91 99777 00777', department: 'Science', photo_url: img(44) },
-        { name: 'Rahul Sir', phone: '+91 99888 00888', department: 'English', photo_url: img(59) },
-        { name: "Anita Ma'am", phone: '+91 99999 00999', department: 'Social Science', photo_url: img(49) }],
+        { name: 'Sagar Sir', phone: '+91 99111 00111', department: 'Mathematics' },
+        { name: "Pooja Ma'am", phone: '+91 99222 00222', department: 'Science' },
+        { name: 'Rahul Sir', phone: '+91 99888 00888', department: 'English' },
+        { name: "Anita Ma'am", phone: '+91 99999 00999', department: 'Social Science' }],
       toppers: [
-        { rank_label: '1st', name: 'Sneha Joshi', class_name: 'Class 12', score: '97%', photo_url: img(48) },
-        { rank_label: '2nd', name: 'Aarav Sharma', class_name: 'Class 10', score: '95%', photo_url: img(11) },
-        { rank_label: '3rd', name: 'Priya Mehta', class_name: 'Class 10', score: '93%', photo_url: img(47) },
-        { rank_label: '4th', name: 'Ishaan Verma', class_name: 'Class 11', score: '91%', photo_url: img(33) }],
+        { name: 'Aarav Sharma', class_name: 'Class 10', score: '95%' },
+        { name: 'Priya Mehta', class_name: 'Class 10', score: '93%' },
+        { name: 'Vijay Mehta', class_name: 'Class 10', score: '83%' },
+        { name: 'Sneha Joshi', class_name: 'Class 12 (Science)', score: '97%' },
+        { name: 'Ishaan Verma', class_name: 'Class 12 (Science)', score: '91%' },
+        { name: 'Rohan Kapoor', class_name: 'Class 12 (Commerce)', score: '94%' },
+        { name: 'Ananya Sen', class_name: 'Class 12 (Commerce)', score: '90%' }],
       events: [
-        ev('Annual Picnic', 'Picnic', 'A fun-filled educational picnic with games, teamwork and memorable activities.', 'photo-1504150558240-0b4fd8946624'),
-        ev('Diwali Celebration', 'Festival', 'A vibrant celebration with rangoli, cultural activities and festive learning.', 'photo-1601050690597-df0568f70950'),
-        ev('Science Exhibition', 'Academic', 'Students present creative experiments, working models and science projects.', 'photo-1532094349884-543bc11b234d'),
-        ev('Sports Day', 'Sports', 'Track, field and team activities that encourage fitness, discipline and sportsmanship.', 'photo-1461896836934-ffe607ba8211'),
-        ev('Annual Day', 'Cultural', 'A celebration of student talent through performances, awards and cultural programmes.', 'photo-1503095396549-807759245b35'),
-        ev('Parent-Teacher Meeting', 'PTM', 'A constructive interaction between parents and teachers to review student progress.', 'photo-1529390079861-591de354faf5'),
-        ev('Independence Day', 'National Day', 'Patriotic activities, student performances and a special assembly celebrating India.', 'photo-1524492412937-b28074a5d7da'),
-        ev('Republic Day', 'National Day', 'A meaningful school celebration with speeches, performances and civic learning.', 'photo-1532375810709-75b1da00537c')],
+        ['Annual Picnic', 'Picnic', 'A fun-filled educational picnic with games, teamwork and memorable activities.'],
+        ['Diwali Celebration', 'Festival', 'A vibrant celebration with rangoli, cultural activities and festive learning.'],
+        ['Science Exhibition', 'Academic', 'Students present creative experiments, working models and science projects.'],
+        ['Sports Day', 'Sports', 'Track, field and team activities that encourage fitness, discipline and sportsmanship.'],
+        ['Annual Day', 'Cultural', 'A celebration of student talent through performances, awards and cultural programmes.'],
+        ['Parent-Teacher Meeting', 'PTM', 'A constructive interaction between parents and teachers to review student progress.'],
+        ['Independence Day', 'National Day', 'Patriotic activities, student performances and a special assembly celebrating India.'],
+        ['Republic Day', 'National Day', 'A meaningful school celebration with speeches, performances and civic learning.']
+      ].map(function (e) { return { title: e[0], category: e[1], description: e[2] }; }),
       notices: [
         { text: '🎓 Admissions open for 2026-27 academic year! Enroll now.' },
         { text: '📝 Unit Test scheduled for Class 10 on 1st September 2026.' },
@@ -85,16 +145,14 @@
         { text: '📅 Parent-Teacher Meeting on 10th September 2026 at 10:00 AM.' }],
       inquiries: [], attendance: [], seq: {}, admin: { user: DEFAULT_ADMIN.user, hash: hash(DEFAULT_ADMIN.pass) }
     };
-    ['students', 'staff', 'toppers', 'events', 'notices', 'inquiries', 'attendance'].forEach(function (k) {
-      db[k].forEach(function (r) { r.id = (db.seq[k] = (db.seq[k] || 0) + 1); r.created_at = now(); });
+    ['students', 'staff', 'toppers', 'events', 'notices'].forEach(function (k) {
+      db[k].forEach(function (r) { r.photo_url = r.photo_url || null; r.id = (db.seq[k] = (db.seq[k] || 0) + 1); r.created_at = now(); });
     });
     return db;
   }
 
-  function hash(s) { var h = 5381; for (var i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return String(h >>> 0); }
-  function now() { return new Date().toISOString().slice(0, 19).replace('T', ' '); }
-
-  var memoryFallback = null;   // used if localStorage is blocked
+  /* ---------- storage ---------- */
+  var memoryFallback = null;   // used only if localStorage is blocked
   function load() {
     try {
       var raw = localStorage.getItem(DB_KEY);
@@ -104,7 +162,10 @@
   }
   function save(db) {
     try { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
-    catch (e) { memoryFallback = db; }
+    catch (e) {
+      if (e && (e.name === 'QuotaExceededError' || e.code === 22)) throw new HttpError(507, 'Browser storage is full. Remove some photos and try again.');
+      memoryFallback = db;
+    }
   }
   function nextId(db, k) { db.seq[k] = (db.seq[k] || 0) + 1; return db.seq[k]; }
 
@@ -115,83 +176,69 @@
       var f = ent.fields[i], v = body[f.key];
       v = v === undefined || v === null ? '' : String(v).trim();
       if (f.required && !v) return { error: f.label + ' is required.' };
-      if (v.length > f.max) return { error: f.label + ' must be at most ' + f.max + ' characters.' };
-      if (v && f.pattern && !f.pattern.test(v)) return { error: f.label + ' is not valid.' };
-      if (v && f.url && !/^(https?:\/\/|\/|[\w.\-]+\.(png|jpe?g|gif|webp|svg)$)/i.test(v)) return { error: f.label + ' must start with http(s):// or be a site path.' };
+      if (f.type === 'photo') {
+        if (v && (!DATA_IMG.test(v) || v.length > 600000)) return { error: 'Photo is invalid or too large.' };
+      } else {
+        if (v.length > (f.max || 100)) return { error: f.label + ' must be at most ' + f.max + ' characters.' };
+        if (v && f.pattern && !f.pattern.test(v)) return { error: f.label + ' is not valid.' };
+        if (v && f.options && f.options.indexOf(v) < 0) return { error: f.label + ' is not valid.' };
+        if (v && f.percent) v = parseFloat(v) + '%';
+      }
       values[f.key] = v === '' ? null : v;
     }
     return { values: values };
   }
-  function isValidDate(s) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
-    var d = new Date(s + 'T00:00:00Z');
-    return !isNaN(d) && d.toISOString().slice(0, 10) === s;
-  }
-  function parseAttendance(body, type) {
-    var name = String(body.name || '').trim();
-    var group = String(body[type === 'Student' ? 'standard' : 'department'] || body.group_name || '').trim();
-    var date = String(body.date || body.att_date || '').trim();
-    var status = String(body.status || '').trim();
-    if (name.length < 2 || name.length > 100) return { error: 'Please enter a valid name.' };
-    if (!group || group.length > 80) return { error: type === 'Student' ? 'Select a class.' : 'Select a department.' };
-    if (type === 'Student' && /^\d{1,2}$/.test(group)) group = 'Class ' + group;
+
+  /* ---------- attendance (only people that exist in the admin lists) ---------- */
+  var typeOf = function (t) { return String(t).toLowerCase() === 'staff' ? 'Staff' : 'Student'; };
+  var listOf = function (db, type) { return type === 'Staff' ? db.staff : db.students; };
+  var groupOf = function (p, type) { return type === 'Staff' ? p.department : p.class_name; };
+
+  function parseAttendance(db, body, type) {
+    var id = +body.person_id, date = String(body.date || body.att_date || '').trim(), status = String(body.status || '').trim();
+    var person = listOf(db, type).filter(function (p) { return p.id === id; })[0];
+    if (!person) return { error: 'Please select ' + (type === 'Staff' ? 'a staff member' : 'a student') + ' from the list.' };
     if (!isValidDate(date)) return { error: 'Please choose a valid date.' };
     if (status !== 'Present' && status !== 'Absent') return { error: 'Choose Present or Absent.' };
-    return { name: name, group: group, date: date, status: status };
+    return { type: type, person_id: id, date: date, status: status };
   }
-  var typeOf = function (t) { return String(t).toLowerCase() === 'staff' ? 'Staff' : 'Student'; };
-
-  function upsertAttendance(db, type, a) {
-    var key = a.name.toLowerCase();
-    var ex = db.attendance.filter(function (r) { return r.person_type === type && r.name.toLowerCase() === key && r.att_date === a.date; })[0];
-    if (ex) { ex.status = a.status; ex.group_name = a.group; return; }
-    db.attendance.push({ id: nextId(db, 'attendance'), person_type: type, name: a.name, group_name: a.group, att_date: a.date, status: a.status, created_at: now() });
+  function upsertAttendance(db, a) {
+    var ex = db.attendance.filter(function (r) { return r.person_type === a.type && r.person_id === a.person_id && r.att_date === a.date; })[0];
+    if (ex) { ex.status = a.status; return; }
+    db.attendance.push({ id: nextId(db, 'attendance'), person_type: a.type, person_id: a.person_id, att_date: a.date, status: a.status, created_at: now() });
   }
 
-  /* ---------- attendance register ---------- */
-  var MONTH_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
-  function currentMonth() { var d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
   function buildRegister(db, type, month) {
-    var p = month.split('-'), y = +p[0], m = +p[1];
-    var days = new Date(Date.UTC(y, m, 0)).getUTCDate();
-    var records = db.attendance.filter(function (r) { return r.person_type === type && r.att_date.slice(0, 7) === month; })
-      .sort(function (a, b) { return a.att_date.localeCompare(b.att_date) || a.name.localeCompare(b.name); })
-      .map(function (r) { return { id: r.id, name: r.name, group_name: r.group_name, att_date: r.att_date, status: r.status }; });
-    var master = type === 'Student'
-      ? sorted(db.students, ['class_name', 'name']).map(function (s) { return { name: s.name, grp: s.class_name }; })
-      : sorted(db.staff, ['name']).map(function (s) { return { name: s.name, grp: s.department }; });
-    var people = {}, order = [];
-    var add = function (name, grp) { var k = name.trim().toLowerCase(); if (!people[k]) { people[k] = { name: name, group: grp, cells: new Array(days).fill('') }; order.push(k); } return people[k]; };
-    master.forEach(function (s) { add(s.name, s.grp); });
-    records.forEach(function (r) { add(r.name, r.group_name).cells[+r.att_date.slice(8, 10) - 1] = r.status === 'Present' ? 'P' : 'A'; });
-    var rows = order.map(function (k) {
-      var q = people[k];
+    var p = month.split('-'), y = +p[0], m = +p[1], days = new Date(Date.UTC(y, m, 0)).getUTCDate();
+    var byId = {};
+    var master = type === 'Staff' ? sorted(db.staff, ['name']) : sorted(db.students, ['class_name', 'name']);
+    var rows = master.map(function (s) {
+      return (byId[s.id] = { id: s.id, name: s.name, group: groupOf(s, type), photo_url: s.photo_url || null, cells: new Array(days).fill('') });
+    });
+    var records = db.attendance.filter(function (r) { return r.person_type === type && byId[r.person_id] && r.att_date.slice(0, 7) === month; })
+      .sort(function (a, b) { return a.att_date.localeCompare(b.att_date) || byId[a.person_id].name.localeCompare(byId[b.person_id].name); })
+      .map(function (r) {
+        var q = byId[r.person_id]; q.cells[+r.att_date.slice(8, 10) - 1] = r.status === 'Present' ? 'P' : 'A';
+        return { id: r.id, person_id: r.person_id, name: q.name, group_name: q.group, photo_url: q.photo_url, att_date: r.att_date, status: r.status };
+      });
+    rows.forEach(function (q) {
       q.present = q.cells.filter(function (c) { return c === 'P'; }).length;
       q.absent = q.cells.filter(function (c) { return c === 'A'; }).length;
-      return q;
     });
     var sundays = [];
     for (var d = 1; d <= days; d++) if (new Date(Date.UTC(y, m - 1, d)).getUTCDay() === 0) sundays.push(d);
     return { month: month, days: days, sundays: sundays, rows: rows, records: records };
   }
 
-  function sorted(list, order) {
-    return list.slice().sort(function (a, b) {
-      for (var i = 0; i < order.length; i++) {
-        var k = order[i], desc = k[0] === '-'; if (desc) k = k.slice(1);
-        var x = a[k], y = b[k], c = typeof x === 'number' ? x - y : String(x || '').localeCompare(String(y || ''));
-        if (c) return desc ? -c : c;
-      }
-      return 0;
-    });
-  }
-
   /* ---------- API router ---------- */
-  function HttpError(status, message) { this.status = status; this.message = message; }
-  function authed(init) {
-    var h = (init && init.headers) || {};
-    var a = h.Authorization || h.authorization || '';
-    if (a !== 'Bearer ' + SESSION_VALUE) throw new HttpError(401, 'Login required.');
+  function listFor(db, key) {
+    var ent = ENTITIES[key];
+    return key === 'toppers' ? rankToppers(db.toppers) : sorted(db[key], ent.order);
+  }
+  function cascadeDelete(db, key, id) {
+    if (key !== 'students' && key !== 'staff') return;
+    var type = key === 'staff' ? 'Staff' : 'Student';
+    db.attendance = db.attendance.filter(function (r) { return !(r.person_type === type && r.person_id === id); });
   }
 
   function route(method, url, body, init) {
@@ -206,8 +253,14 @@
 
     /* public */
     if (method === 'GET' && path === '/api/public/notices') return sorted(db.notices, ['id']).map(function (n) { return { text: n.text }; });
-    if (method === 'GET' && path === '/api/public/toppers') return sorted(db.toppers, ['id']);
+    if (method === 'GET' && path === '/api/public/toppers') return rankToppers(db.toppers);
+    if (method === 'GET' && path === '/api/public/home-toppers') return homeToppers(db.toppers);
     if (method === 'GET' && path === '/api/public/events') return sorted(db.events, ['id']);
+    if (method === 'GET' && path === '/api/public/people') {
+      var pt = typeOf(q.get('type'));
+      return (pt === 'Staff' ? sorted(db.staff, ['name']) : sorted(db.students, ['class_name', 'name']))
+        .map(function (p) { return { id: p.id, name: p.name, group: groupOf(p, pt), photo_url: p.photo_url || null }; });
+    }
     if (method === 'POST' && path === '/api/public/contact') {
       var cb = { name: body.visitorName != null ? body.visitorName : body.name, phone: body.visitorPhone != null ? body.visitorPhone : body.phone,
                  standard: body.visitorStandard != null ? body.visitorStandard : body.standard, message: body.visitorMessage != null ? body.visitorMessage : body.message };
@@ -218,58 +271,57 @@
       return { ok: true, message: 'Thank you! We will contact you soon.' };
     }
     if (method === 'POST' && (m = /^\/api\/public\/attendance\/(student|staff)$/.exec(path))) {
-      var type = m[1] === 'student' ? 'Student' : 'Staff';
-      var a = parseAttendance(body, type);
+      var a = parseAttendance(db, body, typeOf(m[1]));
       if (a.error) throw new HttpError(400, a.error);
       if (new Date(a.date + 'T00:00:00Z') > new Date(Date.now() + 36 * 3600 * 1000)) throw new HttpError(400, 'Attendance cannot be marked for a future date.');
-      upsertAttendance(db, type, a); save(db);
+      upsertAttendance(db, a); save(db);
       return { ok: true, message: 'Attendance submitted. Thank you!' };
     }
 
+
     /* admin (login required) */
     if (path.indexOf('/api/admin') !== 0) throw new HttpError(404, 'Not found.');
-    authed(init);
+    var auth = (init && init.headers && (init.headers.Authorization || init.headers.authorization)) || '';
+    if (!auth === 'Bearer ' + SESSION_VALUE) throw new HttpError(401, 'Login required.');
 
     if (path === '/api/admin-schema') {
       var out = {};
       Object.keys(ENTITIES).forEach(function (k) {
         var e = ENTITIES[k];
-        out[k] = { label: e.label, readOnlyCreate: !!e.readOnlyCreate, extra: e.extra || [], fields: e.fields.map(function (f) {
-          return { key: f.key, label: f.label, long: !!f.long, required: !!f.required, max: f.max, url: !!f.url }; }) };
+        out[k] = { label: e.label, readOnlyCreate: !!e.readOnlyCreate, lead: e.lead || [], extra: e.extra || [], fields: e.fields.map(function (f) {
+          return { key: f.key, label: f.label, type: f.type || '', options: f.options || null, wide: !!f.wide, long: !!f.long, required: !!f.required, max: f.max }; }) };
       });
       return out;
     }
     if (path === '/api/admin/me') return { username: db.admin.user };
     if (path === '/api/admin/stats') {
-      var st = {}; ['students', 'staff', 'toppers', 'events', 'notices', 'inquiries'].forEach(function (k) { st[k] = db[k].length; }); return st;
+      var st = {}; ['students', 'staff', 'toppers', 'events', 'notices', 'inquiries'].forEach(function (k) { st[k] = db[k].length; });
+      return st;
     }
 
     if (path === '/api/admin/attendance' && method === 'GET') {
-      var mo = MONTH_RE.test(q.get('month') || '') ? q.get('month') : currentMonth();
-      return buildRegister(db, typeOf(q.get('type')), mo);
+      return buildRegister(db, typeOf(q.get('type')), MONTH_RE.test(q.get('month') || '') ? q.get('month') : currentMonth());
     }
-    var attFromAdmin = function (b) {
-      var t = typeOf(b.person_type), o = {}; for (var k in b) o[k] = b[k];
-      o[t === 'Student' ? 'standard' : 'department'] = b.group_name;
-      var r = parseAttendance(o, t); if (r.error) throw new HttpError(400, r.error); r.type = t; return r;
-    };
-    if (path === '/api/admin/attendance' && method === 'POST') { var n = attFromAdmin(body); upsertAttendance(db, n.type, n); save(db); return { ok: true, _status: 201 }; }
+    if (path === '/api/admin/attendance' && method === 'POST') {
+      var n = parseAttendance(db, body, typeOf(body.person_type)); if (n.error) throw new HttpError(400, n.error);
+      upsertAttendance(db, n); save(db); return { ok: true, _status: 201 };
+    }
     if ((m = /^\/api\/admin\/attendance\/(\d+)$/.exec(path))) {
       var id = +m[1], rec = db.attendance.filter(function (r) { return r.id === id; })[0];
       if (!rec) throw new HttpError(404, 'Record not found.');
       if (method === 'DELETE') { db.attendance = db.attendance.filter(function (r) { return r.id !== id; }); save(db); return { ok: true }; }
       if (method === 'PUT') {
-        var p = attFromAdmin(body);
-        var dup = db.attendance.some(function (r) { return r.id !== id && r.person_type === p.type && r.name.toLowerCase() === p.name.toLowerCase() && r.att_date === p.date; });
+        var p = parseAttendance(db, body, rec.person_type); if (p.error) throw new HttpError(400, p.error);
+        var dup = db.attendance.some(function (r) { return r.id !== id && r.person_type === p.type && r.person_id === p.person_id && r.att_date === p.date; });
         if (dup) throw new HttpError(409, 'Another record already exists for that person and date.');
-        rec.person_type = p.type; rec.name = p.name; rec.group_name = p.group; rec.att_date = p.date; rec.status = p.status; save(db);
+        rec.person_id = p.person_id; rec.att_date = p.date; rec.status = p.status; save(db);
         return { ok: true };
       }
     }
 
     if ((m = /^\/api\/admin\/([a-z]+)(?:\/(\d+))?$/.exec(path)) && ENTITIES[m[1]]) {
       var key = m[1], ent = ENTITIES[key], rid = m[2] ? +m[2] : null;
-      if (method === 'GET' && !rid) return sorted(db[key], ent.order);
+      if (method === 'GET' && !rid) return listFor(db, key);
       if (method === 'POST' && !rid) {
         if (ent.readOnlyCreate) throw new HttpError(405, 'Not allowed.');
         var cr = cleanBody(ent, body); if (cr.error) throw new HttpError(400, cr.error);
@@ -280,7 +332,7 @@
         var row = db[key].filter(function (r) { return r.id === rid; })[0];
         if (!row) throw new HttpError(404, 'Record not found.');
         if (method === 'PUT') { var up = cleanBody(ent, body); if (up.error) throw new HttpError(400, up.error); Object.assign(row, up.values); save(db); return { ok: true }; }
-        if (method === 'DELETE') { db[key] = db[key].filter(function (r) { return r.id !== rid; }); save(db); return { ok: true }; }
+        if (method === 'DELETE') { db[key] = db[key].filter(function (r) { return r.id !== rid; }); cascadeDelete(db, key, rid); save(db); return { ok: true }; }
       }
     }
     throw new HttpError(404, 'Not found.');
@@ -294,8 +346,7 @@
     init = init || {};
     var status = 200, payload;
     try {
-      var body = init.body ? JSON.parse(init.body) : {};
-      payload = route((init.method || 'GET').toUpperCase(), url, body, init);
+      payload = route((init.method || 'GET').toUpperCase(), url, init.body ? JSON.parse(init.body) : {}, init);
       if (payload && payload._status) { status = payload._status; delete payload._status; }
     } catch (e) {
       if (e instanceof HttpError) { status = e.status; payload = { error: e.message }; }
@@ -305,21 +356,19 @@
   };
 
   /* ---------- Excel / PDF export (done in the browser) ---------- */
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function table(title, head, rows) {
     return '<h2>' + esc(title) + '</h2><table border="1" cellspacing="0" cellpadding="4"><thead><tr>' +
       head.map(function (h) { return '<th style="background:#4338ca;color:#fff">' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
       rows.map(function (r) { return '<tr>' + r.map(function (c) { return '<td>' + esc(c) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>';
   }
   function entityTable(db, key) {
-    var e = ENTITIES[key], cols = e.fields.filter(function (f) { return !f.noExport; }).concat(e.extra || []);
-    var rows = sorted(db[key], e.order).map(function (r, i) { return [i + 1].concat(cols.map(function (c) { return r[c.key]; })); });
+    var e = ENTITIES[key];
+    var cols = (e.lead || []).concat(e.fields.filter(function (f) { return !f.noExport; }), e.extra || []);
+    var rows = listFor(db, key).map(function (r, i) { return [i + 1].concat(cols.map(function (c) { return r[c.key]; })); });
     return table(e.label, ['#'].concat(cols.map(function (c) { return c.label; })), rows);
   }
   function registerTables(db, type, month) {
-    var reg = buildRegister(db, type, month), days = [];
-    for (var i = 1; i <= reg.days; i++) days.push(String(i));
-    var grp = type === 'Student' ? 'Class' : 'Department';
+    var reg = buildRegister(db, type, month), days = range(1, reg.days).map(String), grp = type === 'Staff' ? 'Department' : 'Class';
     return table(type + ' Attendance Register – ' + month, [type, grp].concat(days, ['Present', 'Absent']),
         reg.rows.map(function (r) { return [r.name, r.group].concat(r.cells, [r.present, r.absent]); })) +
       table(type + ' Attendance Records – ' + month, ['Date', type, grp, 'Status'],
@@ -336,8 +385,8 @@
       title = 'Sagar Classes – all data';
       html = Object.keys(ENTITIES).map(function (k) { return entityTable(db, k); }).join('<br>') + '<br>' + registerTables(db, 'Student', month) + '<br>' + registerTables(db, 'Staff', month);
     } else if (name === 'student-attendance' || name === 'staff-attendance') {
-      title = (name.indexOf('staff') === 0 ? 'Staff' : 'Student') + ' attendance ' + month;
-      html = registerTables(db, name.indexOf('staff') === 0 ? 'Staff' : 'Student', month);
+      var t = name.indexOf('staff') === 0 ? 'Staff' : 'Student';
+      title = t + ' attendance ' + month; html = registerTables(db, t, month);
     } else if (ENTITIES[name]) { title = ENTITIES[name].label; html = entityTable(db, name); }
     else return false;
 
@@ -352,17 +401,45 @@
       setTimeout(function () { w.print(); }, 400);
       return true;
     }
-    var blob = new Blob(['\ufeff' + doc], { type: 'application/vnd.ms-excel' });
-    var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + doc], { type: 'application/vnd.ms-excel' }));
     a.download = (fallbackName || name).replace(/\.xlsx$/, '') + '-' + new Date().toISOString().slice(0, 10) + '.xls';
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
     return true;
   }
 
+  /* ---------- tiny DOM helpers shared by script.js and admin.js (text is always set as textContent) ---------- */
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    Object.keys(attrs || {}).forEach(function (k) {
+      var v = attrs[k];
+      if (v === null || v === undefined || v === false) return;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.indexOf('on') === 0 && typeof v === 'function') el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    });
+    (function add(list) {   // children may be nodes, strings or arrays of them
+      list.forEach(function (c) {
+        if (c === null || c === undefined || c === false) return;
+        if (Array.isArray(c)) return add(c);
+        el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+      });
+    })([].slice.call(arguments, 2));
+    return el;
+  }
+  /* <img> that shows the class logo when there is no photo (or the photo fails to load) */
+  function img(src, alt, cls) {
+    var el = h('img', { alt: alt || '', loading: 'lazy', class: cls || '' });
+    var useLogo = function () { el.src = LOGO; el.classList.add('is-logo'); };
+    if (src) { el.src = src; el.addEventListener('error', useLogo); } else useLogo();
+    return el;
+  }
+
   window.SCStore = {
-    download: download,
-    sessionKey: SESSION_KEY,
+    logo: LOGO, h: h, img: img, download: download,
+    photo: function (src) { return src || LOGO; },
     setAdmin: function (user, pass) {
       if (!user || !pass || pass.length < 8) throw new Error('Username required and password must be 8+ characters.');
       var db = load(); db.admin = { user: user, hash: hash(pass) }; save(db); return 'Admin login updated.';
